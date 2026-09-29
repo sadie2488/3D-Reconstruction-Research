@@ -27,7 +27,14 @@ python -m pip install -r requirements.txt
 Check that a dataset folder loads (image count, resolution, intrinsics):
 
 ```powershell
-python src/check_data.py --data data/sample
+python -m src.check_data --data data/sample
+```
+
+Match all image pairs (SIFT + FLANN + ratio test + RANSAC), print the inlier
+matrix, and save a match picture:
+
+```powershell
+python -m src.match_pairs --data data/sample --out results/sample
 ```
 
 A dataset folder holds the images (`.jpg`/`.png`, processed in filename order)

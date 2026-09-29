@@ -1,21 +1,20 @@
-"""Sanity-check a dataset folder: image count, resolution, and K matrix.
+"""Sanity check for a dataset folder: image count, resolution, K.
 
-Usage:
-    python src/check_data.py --data data/sample
+    python -m src.check_data --data data/sample
 
-Exit code 0 if images and a valid K were loaded, 1 otherwise.
+Exit code 0 = images + valid K loaded, 1 = problem.
 """
 import argparse
 import sys
 from collections import Counter
 from pathlib import Path
 
-from data_loader import (CalibrationError, find_calibration_file,
-                         list_images, load_images, load_intrinsics)
+from .data_loader import (CalibrationError, find_calibration_file,
+                          list_images, load_images, load_intrinsics)
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser = argparse.ArgumentParser(description="Sanity-check a dataset folder.")
     parser.add_argument("--data", default="data/sample", help="dataset folder")
     args = parser.parse_args()
     folder = Path(args.data)
@@ -25,7 +24,7 @@ def main():
         print("  ERROR: folder does not exist.")
         return 1
 
-    # Images
+    # --- Images ---
     names, images = load_images(folder)
     sizes = Counter((img.shape[1], img.shape[0]) for img in images)
     print(f"\nImages: {len(images)}")
@@ -40,7 +39,7 @@ def main():
     if others:
         print(f"  other files (not loaded as images): {', '.join(others)}")
 
-    # Intrinsics
+    # --- K (intrinsics) ---
     print("\nCalibration (K):")
     k_path = find_calibration_file(folder)
     if k_path is None:
@@ -64,6 +63,7 @@ def main():
     print(f"  fx={fx:.2f}  fy={fy:.2f}  cx={cx:.2f}  cy={cy:.2f}  skew={skew:.4f}")
     if image_size is not None:
         w, h = image_size
+        # a real lens's principal point sits near the center; far off = wrong K
         print(f"  principal point offset from image center: "
               f"({cx - w / 2:+.1f}, {cy - h / 2:+.1f}) px")
     print("\nOK: images and intrinsics loaded.")

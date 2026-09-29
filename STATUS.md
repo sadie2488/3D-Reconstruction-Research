@@ -1,20 +1,21 @@
 # Status
 
-Last updated: 2026-09-29 (Step 1 complete)
+Last updated: 2026-09-29 (Step 2 complete)
 
 ## Works
 - Project skeleton: `src/`, `data/`, `results/`, venv (Python 3.12), `requirements.txt`
-- Image loader (`src/data_loader.py`): loads 10 fountain images, 3072 x 2048
-- Intrinsics loader: reads and validates `data/sample/K.txt`
-  (fx=2759.48, fy=2764.16, cx=1520.69, cy=1006.81)
-- Sanity check (`src/check_data.py`): prints image count, resolution, K; exits 1 if K is missing or invalid
+- Dataset loader (`src/data_loader.py`): 11 fountain images (3072 x 2048) + `K.txt`;
+  optional downscale that scales K to match
+- Sanity check (`python -m src.check_data`)
+- Feature matching (`python -m src.match_pairs`): SIFT + FLANN + ratio test +
+  RANSAC on all 55 pairs at 1600 px, ~5 s. Neighbouring views get 1000-1800 inliers.
+  Output: `results/sample/inlier_matrix.csv`, `results/sample/matches_0001_0002.jpg`
 
 ## Partially works
-- Sample dataset: 10 of 11 fountain-P11 views usable. `data/sample/K (1).txt` is
-  a mislabeled JPEG (probably the 11th view) and is currently ignored.
+- Pairs far apart (e.g. 1 vs 11) still report 12-30 "inliers"; these are
+  probably chance fits, not real matches. Nothing filters them by count yet.
 
 ## Not started
-- Step 2: feature matching (SIFT + FLANN + ratio test + RANSAC)
 - Step 3: sparse reconstruction + `view.py`
-- Step 4: own photos (optional)
+- Step 4: own photos
 - Step 5: `run.py`, turntable GIF, metrics, README polish
