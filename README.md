@@ -1,0 +1,35 @@
+# Multi-view 3D Reconstruction
+
+Work in progress: 3D reconstruction from multiple calibrated photos using
+OpenCV and Open3D. See [STATUS.md](STATUS.md) for what works right now.
+
+## Layout
+
+```
+src/        pipeline code
+data/       input image folders (not in git; see data/README.md)
+results/    outputs (point clouds, images, metrics)
+```
+
+## Setup (Windows, PowerShell)
+
+Requires Python 3.12 (Open3D does not reliably ship wheels for the newest
+Python versions).
+
+```powershell
+py -V:Astral/CPython3.12.13 -m venv .venv   # or any Python 3.12: py -3.12 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+```
+
+## Usage
+
+Check that a dataset folder loads (image count, resolution, intrinsics):
+
+```powershell
+python src/check_data.py --data data/sample
+```
+
+A dataset folder holds the images (`.jpg`/`.png`, processed in filename order)
+and a `K.txt` with the 3x3 intrinsics matrix. Intrinsics are never guessed: if
+`K.txt` is missing or invalid, the script says so and exits with code 1.

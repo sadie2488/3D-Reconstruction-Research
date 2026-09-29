@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.pyc
+
+# Image datasets are large; keep them out of git (see data/README.md)
+data/*
+!data/README.md
