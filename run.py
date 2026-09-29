@@ -3,17 +3,21 @@
     python run.py --images data/sample --out results/sample          (folder has K.txt)
     python run.py --images <phone photos> --out results/<name> --k-from-exif
 
-Outputs in --out: sparse.ply (raw), sparse_clean.ply (outliers removed).
-View with: python view.py <out>/sparse_clean.ply
+Outputs in --out:
+  sparse.ply        raw point cloud
+  sparse_clean.ply  outliers removed (view with: python view.py <out>/sparse_clean.ply)
+  turntable.gif     360-degree spin of the clean cloud
+  metrics.json      images registered, point count, reprojection error, runtime
 Scratch files (resized images, COLMAP database/model) go to <out>/work/.
 """
 import argparse
+import json
 import time
 from pathlib import Path
 
 import open3d as o3d
 
-from src import cleanup, photos, sfm
+from src import cleanup, photos, render, sfm
 from src.data_loader import CalibrationError, load_dataset
 
 CAPTURE_TIPS = """How to get more images to register:
@@ -73,9 +77,10 @@ def main():
     if missing:
         print(f"\nWARNING: {len(missing)} image(s) did not register: {', '.join(missing)}")
         print(CAPTURE_TIPS)
+    fx_final, fy_final = sfm.focal_after_ba(rec)
     if refine:
-        fx, fy = sfm.focal_after_ba(rec)
-        print(f"Focal length after bundle adjustment: fx={fx:.1f} fy={fy:.1f} (started at {K[0, 0]:.1f})")
+        print(f"Focal length after bundle adjustment: fx={fx_final:.1f} fy={fy_final:.1f} "
+              f"(started at {K[0, 0]:.1f})")
 
     # --- Export + cleanup ---
     pcd = sfm.to_point_cloud(rec)
@@ -87,13 +92,33 @@ def main():
         print(f"Plane removal: removed {n_plane} points, {len(clean.points)} left")
     o3d.io.write_point_cloud(str(out / "sparse_clean.ply"), clean)
 
+    # --- Turntable GIF ---
+    t0 = time.time()
+    renderer = render.save_turntable(clean, out / "turntable.gif")
+    timings["gif_s"] = time.time() - t0
+
+    # --- Metrics file ---
     runtime = time.time() - t_start
+    metrics = {
+        "images_dir": str(args.images),
+        "working_size": [w, h],
+        **stats,
+        "points3d_clean": len(clean.points),
+        "k_source": k_source,
+        "focal_px_initial": round(float(K[0, 0]), 2),
+        "focal_px_final": round(fx_final, 2),
+        "timings_s": {k: round(v, 1) for k, v in timings.items()},
+        "runtime_s": round(runtime, 1),
+        "gif_renderer": renderer,
+    }
+    (out / "metrics.json").write_text(json.dumps(metrics, indent=2))
+
     print(f"\nRegistered {stats['images_registered']}/{stats['images_total']} images")
     print(f"3D points: {stats['points3d']} ({len(clean.points)} after cleanup)")
     print(f"Mean reprojection error: {stats['mean_reprojection_error_px']} px")
     print(f"Mean track length: {stats['mean_track_length']} views/point")
     print("Timings: " + ", ".join(f"{k} {v:.1f}s" for k, v in timings.items()) + f", total {runtime:.1f}s")
-    print(f"Saved {out / 'sparse.ply'} and {out / 'sparse_clean.ply'}")
+    print(f"Saved to {out}: sparse.ply, sparse_clean.ply, turntable.gif ({renderer}), metrics.json")
 
 
 if __name__ == "__main__":

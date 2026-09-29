@@ -1,0 +1,24 @@
+{
+  "images_dir": "data/sample",
+  "working_size": [
+    1600,
+    1067
+  ],
+  "images_total": 11,
+  "images_registered": 11,
+  "points3d": 15109,
+  "mean_reprojection_error_px": 0.233,
+  "mean_track_length": 4.79,
+  "points3d_clean": 14870,
+  "k_source": "K.txt",
+  "focal_px_initial": 1437.23,
+  "focal_px_final": 1437.23,
+  "timings_s": {
+    "features_s": 4.3,
+    "matching_s": 14.6,
+    "mapping_s": 9.3,
+    "gif_s": 4.0
+  },
+  "runtime_s": 32.9,
+  "gif_renderer": "open3d"
+}
