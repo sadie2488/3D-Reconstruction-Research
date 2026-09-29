@@ -41,8 +41,20 @@ Sparse reconstruction (pycolmap) to a colored point cloud, then view it:
 
 ```powershell
 python run.py --images data/sample --out results/sample
-python view.py results/sample/sparse.ply
+python view.py results/sample/sparse_clean.ply
 ```
+
+Own photos (no `K.txt`): K is built from the EXIF focal length (fallback guess
+f = 1.2 x max(w, h), printed as a warning) and refined by bundle adjustment.
+Images are rotated upright from EXIF and downscaled to 1600 px.
+
+```powershell
+python run.py --images <photo folder> --out results/<name> --k-from-exif
+python run.py --images <photo folder> --out results/<name> --k-from-exif --remove-plane
+```
+
+`--remove-plane` deletes the single largest plane (a table or floor under an
+object). On scenes where the main subject is itself a wall, it removes the wall.
 
 A dataset folder holds the images (`.jpg`/`.png`, processed in filename order)
 and a `K.txt` with the 3x3 intrinsics matrix. Intrinsics are never guessed: if

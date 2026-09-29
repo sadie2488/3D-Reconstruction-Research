@@ -1,24 +1,26 @@
 # Status
 
-Last updated: 2026-09-29 (Step 3 complete: demo floor reached)
+Last updated: 2026-09-29 (Step 4 complete)
 
 ## Works
-- Project skeleton: `src/`, `data/`, `results/`, venv (Python 3.12), `requirements.txt`
-- Dataset loader (`src/data_loader.py`): 11 fountain images (3072 x 2048) + `K.txt`;
-  optional downscale that scales K to match
-- Sanity check (`python -m src.check_data`)
-- Feature matching (`python -m src.match_pairs`): SIFT + FLANN + ratio test +
-  RANSAC on all 55 pairs at 1600 px, ~5 s
+- Dataset loader + sanity check (`python -m src.check_data`): 11 fountain images + `K.txt`
+- Feature matching (`python -m src.match_pairs`): SIFT + FLANN + ratio test + RANSAC, all 55 pairs, ~5 s
 - Sparse reconstruction (`python run.py`): pycolmap 4.2.1 with fixed K.
-  Sample: 11/11 images registered, ~15,100 points, 0.23 px mean reprojection
-  error, ~30-50 s. Output `results/sample/sparse.ply`, upright and centered
+  Sample: 11/11 registered, ~15,100 points, 0.23 px mean reprojection error, ~30 s
+- Cleanup: statistical outlier removal + far-point crop -> `sparse_clean.ply`
+  (~14,870 points, opens well framed); optional `--remove-plane`
 - Viewer (`python view.py <ply>`)
+- Own photos (`--k-from-exif`): EXIF rotation, K from 35mm-equivalent focal
+  length, fallback guess, focal refined by bundle adjustment. Tested on synthetic
+  EXIF copies of the sample (focal recovered to within 0.1%), including a rotated
+  image; HEIC files and odd-sized images are skipped with warnings
+- Registration errors: clear message + capture tips when < 3 images register;
+  lists any images that did not register
 
 ## Partially works
-- Stray far points (up to ~20 units away, main scene ~5) make the viewer's
-  auto-fit start zoomed out. Cleanup comes in Step 4.
-- Step 2 matching is a separate diagnostic; COLMAP runs its own SIFT and matching.
+- Own-photo mode has not been tried on real phone photos yet (none in the repo)
+- `--remove-plane` removes the largest plane, whatever it is (on the fountain: the wall)
+- Step 2 matching is a separate diagnostic; COLMAP runs its own SIFT and matching
 
 ## Not started
-- Step 4: own photos (EXIF K), point cloud cleanup
 - Step 5: turntable GIF, metrics file, README polish

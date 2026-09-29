@@ -123,6 +123,18 @@ def to_point_cloud(rec):
 
 # --- Summary numbers ---
 
+def registered_indices(rec):
+    """Indices (into the input image list) of images that got a camera pose."""
+    if rec is None:
+        return []
+    return sorted(int(Path(img.name).stem) for img in rec.images.values() if img.has_pose)
+
+
+def focal_after_ba(rec):
+    cam = next(iter(rec.cameras.values()))
+    return float(cam.params[0]), float(cam.params[1])  # PINHOLE params: fx, fy, cx, cy
+
+
 def summarize(rec, num_images):
     if rec is None:
         return {"images_total": num_images, "images_registered": 0, "points3d": 0,
