@@ -37,6 +37,13 @@ matrix, and save a match picture:
 python -m src.match_pairs --data data/sample --out results/sample
 ```
 
+Sparse reconstruction (pycolmap) to a colored point cloud, then view it:
+
+```powershell
+python run.py --images data/sample --out results/sample
+python view.py results/sample/sparse.ply
+```
+
 A dataset folder holds the images (`.jpg`/`.png`, processed in filename order)
 and a `K.txt` with the 3x3 intrinsics matrix. Intrinsics are never guessed: if
 `K.txt` is missing or invalid, the script says so and exits with code 1.

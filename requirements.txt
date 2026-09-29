@@ -4,3 +4,4 @@ open3d==0.20.0
 scipy==1.18.1
 tqdm==4.70.1
 matplotlib==3.11.2
+pycolmap==4.2.1

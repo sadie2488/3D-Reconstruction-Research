@@ -1,6 +1,6 @@
 # Status
 
-Last updated: 2026-09-29 (Step 2 complete)
+Last updated: 2026-09-29 (Step 3 complete: demo floor reached)
 
 ## Works
 - Project skeleton: `src/`, `data/`, `results/`, venv (Python 3.12), `requirements.txt`
@@ -8,14 +8,17 @@ Last updated: 2026-09-29 (Step 2 complete)
   optional downscale that scales K to match
 - Sanity check (`python -m src.check_data`)
 - Feature matching (`python -m src.match_pairs`): SIFT + FLANN + ratio test +
-  RANSAC on all 55 pairs at 1600 px, ~5 s. Neighbouring views get 1000-1800 inliers.
-  Output: `results/sample/inlier_matrix.csv`, `results/sample/matches_0001_0002.jpg`
+  RANSAC on all 55 pairs at 1600 px, ~5 s
+- Sparse reconstruction (`python run.py`): pycolmap 4.2.1 with fixed K.
+  Sample: 11/11 images registered, ~15,100 points, 0.23 px mean reprojection
+  error, ~30-50 s. Output `results/sample/sparse.ply`, upright and centered
+- Viewer (`python view.py <ply>`)
 
 ## Partially works
-- Pairs far apart (e.g. 1 vs 11) still report 12-30 "inliers"; these are
-  probably chance fits, not real matches. Nothing filters them by count yet.
+- Stray far points (up to ~20 units away, main scene ~5) make the viewer's
+  auto-fit start zoomed out. Cleanup comes in Step 4.
+- Step 2 matching is a separate diagnostic; COLMAP runs its own SIFT and matching.
 
 ## Not started
-- Step 3: sparse reconstruction + `view.py`
-- Step 4: own photos
-- Step 5: `run.py`, turntable GIF, metrics, README polish
+- Step 4: own photos (EXIF K), point cloud cleanup
+- Step 5: turntable GIF, metrics file, README polish

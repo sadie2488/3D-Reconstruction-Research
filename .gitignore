@@ -9,3 +9,6 @@ data/*
 !data/sample/
 data/sample/*
 !data/sample/K.txt
+
+# COLMAP scratch (resized images, database, model)
+results/*/work/
