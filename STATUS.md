@@ -18,13 +18,12 @@ Last updated: 2026-09-29 (Steps 1-5 + one stretch complete)
 - Turntable GIF: Open3D offscreen (2-4 s), matplotlib fallback tested
 - Smoke test (`python tests/smoke_test.py`): passes
 - README with GIF, results, usage, limitations, future work
+- Stretch (picked one): SIFT vs ORB table (`python -m src.compare_features`),
+  in README and `results/sample/sift_vs_orb.md`
 
 ## Partially works
 - Own-photo mode not yet tried on real phone photos (only synthetic EXIF copies of the sample)
 - `--remove-plane` removes the largest plane, whatever it is (on the fountain: the wall)
-
-- Stretch (picked one): SIFT vs ORB table (`python -m src.compare_features`),
-  in README and `results/sample/sift_vs_orb.md`
 
 ## Not started
 - Other stretch goals (Poisson mesh, Gradio page): skipped, brief allows at most one
