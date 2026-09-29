@@ -5,3 +5,7 @@ __pycache__/
 # Image datasets are large; keep them out of git (see data/README.md)
 data/*
 !data/README.md
+# ...but track calibration files (tiny, and the pipeline depends on them)
+!data/sample/
+data/sample/*
+!data/sample/K.txt
