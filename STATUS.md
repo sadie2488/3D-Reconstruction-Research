@@ -1,6 +1,6 @@
 # Status
 
-Last updated: 2026-09-29 (Steps 1-5 complete)
+Last updated: 2026-09-29 (Steps 1-5 + one stretch complete)
 
 ## Works
 - Dataset loader + sanity check (`python -m src.check_data`): 11 fountain images + `K.txt`
@@ -23,5 +23,8 @@ Last updated: 2026-09-29 (Steps 1-5 complete)
 - Own-photo mode not yet tried on real phone photos (only synthetic EXIF copies of the sample)
 - `--remove-plane` removes the largest plane, whatever it is (on the fountain: the wall)
 
+- Stretch (picked one): SIFT vs ORB table (`python -m src.compare_features`),
+  in README and `results/sample/sift_vs_orb.md`
+
 ## Not started
-- Stretch goals (Poisson mesh / Gradio page / SIFT vs ORB table)
+- Other stretch goals (Poisson mesh, Gradio page): skipped, brief allows at most one

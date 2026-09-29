@@ -10,11 +10,20 @@ import numpy as np
 
 def detect_sift(images, max_features=0):
     """List of (keypoints, descriptors), one per image. max_features=0 = no limit."""
-    sift = cv2.SIFT_create(nfeatures=max_features)
+    return detect(images, cv2.SIFT_create(nfeatures=max_features))
+
+
+# --- ORB features (fast binary alternative, used in the SIFT vs ORB comparison) ---
+
+def detect_orb(images, max_features=5000):
+    return detect(images, cv2.ORB_create(nfeatures=max_features))
+
+
+def detect(images, detector):
     feats = []
     for img in images:
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        feats.append(sift.detectAndCompute(gray, None))
+        feats.append(detector.detectAndCompute(gray, None))
     return feats
 
 
@@ -24,8 +33,13 @@ FLANN_INDEX_KDTREE = 1
 
 
 def ratio_test_matches(desc1, desc2, ratio=0.75):
-    flann = cv2.FlannBasedMatcher(dict(algorithm=FLANN_INDEX_KDTREE, trees=5), dict(checks=50))
-    knn = flann.knnMatch(desc1, desc2, k=2)
+    if desc1.dtype == np.uint8:
+        # binary descriptors (ORB): Hamming distance, brute force
+        matcher = cv2.BFMatcher(cv2.NORM_HAMMING)
+    else:
+        # float descriptors (SIFT): approximate nearest neighbours with a KD-tree
+        matcher = cv2.FlannBasedMatcher(dict(algorithm=FLANN_INDEX_KDTREE, trees=5), dict(checks=50))
+    knn = matcher.knnMatch(desc1, desc2, k=2)
     # ratio test: keep a match only if it is clearly better than the 2nd-best candidate
     return [p[0] for p in knn if len(p) == 2 and p[0].distance < ratio * p[1].distance]
 

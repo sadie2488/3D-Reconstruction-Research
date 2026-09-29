@@ -32,6 +32,19 @@ Pairwise matching on the same images (Step 2 diagnostic): neighbouring views
 share 1,000-1,800 RANSAC inliers ([inlier matrix](results/sample/inlier_matrix.csv),
 [match picture](results/sample/matches_0001_0002.jpg)).
 
+### SIFT vs ORB
+
+Same 11 images, same ratio test and RANSAC; means per image pair
+(`python -m src.compare_features`):
+
+| Detector | Keypoints/img | Detect time | Neighbour pairs: inliers (inlier %) | 3-apart pairs: inliers (inlier %) |
+|---|---|---|---|---|
+| SIFT | 4,303 | 1.4 s | 1,589 (89%) | 444 (80%) |
+| ORB (5000 max) | 4,997 | 0.4 s | 652 (65%) | 142 (54%) |
+
+ORB is ~3.5x faster to detect, but SIFT gives 2-3x more geometrically
+consistent matches, and the gap widens as the viewpoint change grows.
+
 ## Setup (Windows, PowerShell)
 
 Requires Python 3.12. Open3D and pycolmap do not reliably ship wheels for the
@@ -79,6 +92,7 @@ fixed zoom. `--remove-plane` removes the largest flat surface (a table or floor)
 ```powershell
 python -m src.check_data --data data/sample                          # sanity-check a dataset folder
 python -m src.match_pairs --data data/sample --out results/sample    # pairwise matching diagnostic
+python -m src.compare_features --data data/sample --out results/sample  # SIFT vs ORB table
 python tests/smoke_test.py                                           # end-to-end smoke test (~40 s)
 ```
 
@@ -91,6 +105,7 @@ src/data_loader.py  images + K.txt loading, downscaling
 src/photos.py       own photos: EXIF rotation and EXIF-based K
 src/features.py     SIFT, FLANN, ratio test, RANSAC (Step 2 diagnostic)
 src/match_pairs.py  all-pairs matching script
+src/compare_features.py  SIFT vs ORB comparison
 src/sfm.py          pycolmap reconstruction, export, metrics
 src/cleanup.py      outlier removal, far-point crop, plane removal
 src/render.py       turntable GIF (Open3D offscreen, matplotlib fallback)
